@@ -2,5 +2,5 @@
 
 ## Parallel merge sort
 
-Expected speedup: fast
+Expected speedup: O(log n)
 

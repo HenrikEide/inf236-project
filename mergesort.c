@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define yes 1
+
 // TODO: This needs to be fixed
 // It is not working properly
 // Stack smashing detected
@@ -28,15 +30,17 @@
 
 // Merge c
 void merge(int *a, int *b, int l, int r){
-    int i, j, k;
+        int i, j, k;
+    
     for(i = j = k = l; i < r; k++){
         if(a[i] <= a[j]){
-        b[k] = a[i++];
-        }else{
-        b[k] = a[j++];
+            b[k] = a[i++];
+        }
+        else{
+            b[k] = a[j++];
         }
     }
-    while(i < r){
+    while(i < r){ 
         b[k++] = a[i++];
     }
     while(j < r){

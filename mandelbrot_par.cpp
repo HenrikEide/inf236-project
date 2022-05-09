@@ -41,13 +41,13 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
       default:
         cerr << "Fell through :(" << endl;
-        fprintf(stderr, "Usage: %s [-i max_iter] [-w x] [-h y] [-x x_min] [-X x_max] [-y y_min] [-Y y_max]\n", argv[0]);
+        fprintf(stderr, "Usage: %s [-i max_iter] [-s size] [-x x_min] [-X x_max] [-y y_min] [-Y y_max]\n", argv[0]);
         exit(EXIT_FAILURE);
     }
   }
 
   if (mandelbrot.unset()) {
-    fprintf(stderr, "Usage: %s [-i max_iter] [-w x] [-h y] [-x x_min] [-X x_max] [-y y_min] [-Y y_max]\n", argv[0]);
+    fprintf(stderr, "Usage: %s [-i max_iter] [-s size] [-x x_min] [-X x_max] [-y y_min] [-Y y_max]\n", argv[0]);
     exit(EXIT_FAILURE);
   }
 

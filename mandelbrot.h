@@ -6,15 +6,6 @@
 
 using namespace std;
 
-struct complex {
-  float real, imag;
-
-  complex(float _real, float _imag) {
-    real = _real;
-    imag = _imag;
-  }
-};
-
 struct Mandelbrot {
   size_t maxIter;
   size_t size;

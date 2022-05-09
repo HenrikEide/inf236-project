@@ -1,0 +1,258 @@
+\documentclass[12pt,a4paper,oneside,article]{memoir}
+
+\usepackage{polyglossia}
+\setdefaultlanguage{english}
+\usepackage{fontspec}
+
+\defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase,Renderer=OpenType}
+\defaultfontfeatures[\rmfamily]{Scale = 1}
+\newfontfeature{Microtype}{protrusion=default;expansion=default;}
+\usepackage[final]{microtype}
+\usepackage{mathtools,amssymb}
+\usepackage{unicode-math}
+
+\setmainfont[Microtype,Microtype,Ligatures={Common,TeX},Numbers=OldStyle]{TeX Gyre Pagella}
+\setsansfont[Microtype,Numbers=OldStyle]{TeX Gyre Heros}
+\setmonofont{TeX Gyre Cursor}
+\setmathfont{TeX Gyre Pagella Math}
+
+\usepackage{subfiles}
+\usepackage{tabulary}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{mathtools}
+\usepackage[shortlabels]{enumitem}
+\usepackage{subcaption}
+
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+% \hypersetup{colorlinks = true}
+\usepackage{xcolor, colortbl, array}
+
+\usepackage{titling}
+\usepackage{listings}
+\lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
+\lstMakeShortInline[columns=fixed]|
+
+\usepackage{color}
+\usepackage[autostyle,strict,autopunct]{csquotes}
+
+\usepackage{chngcntr}
+\counterwithin{table}{chapter}
+\numberwithin{equation}{chapter}
+\counterwithin{figure}{chapter}
+\setenumerate[0]{label= (\alph*)}
+\AtBeginDocument{\counterwithin{lstlisting}{chapter}}
+% \counterwithout{section}{chapter}
+\renewcommand{\thefootnote}{\roman{footnote}}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest}
+\usepackage{tikz}
+\usetikzlibrary{matrix,fit,backgrounds,calc,positioning,arrows.meta}
+\tikzset{
+diagonal fill/.style 2 args={fill=#2, path picture={%
+\fill[#1] (path picture bounding box.south west) -|
+                         (path picture bounding box.north east) -- cycle;}},
+reversed diagonal fill/.style 2 args={fill=#2, path picture={
+\fill[#1] (path picture bounding box.north west) |-
+                         (path picture bounding box.south east) -- cycle;}}
+}
+
+% \chapterstyle{bringhurst}
+\pagenumbering{roman}
+\makepagestyle{plain}
+\makeevenfoot{plain}{INF236---Parallel Programming}{}{\thepage}
+\makeoddfoot{plain}{INF236---Parallel Programming}{}{\thepage}
+\makeevenhead{plain}{\theauthor}{}{\thedate}
+\makeoddhead{plain}{\theauthor}{}{\thedate}
+
+\title{INF236 --- Mandatory 3}
+\author{Henrik Eide, Sondre Aasemoen}
+\date{Spring 2022}
+\begin{document}
+\chapter{Implementation}
+
+We ended up writing two separate programs as we figured, two people, two 
+problems. As it turns out it the amount of trouble one encounters is not
+a linear function based on team members, but much worse.
+
+\section{Mandelbrot}
+
+The mandelbrot implementation should be fairly straight forward for anyone 
+who has written an implementation like it before. We ended up writing this 
+one in C++ as this was the language Sondre was most familiar with compared 
+to the insanity that C is.
+
+Most of the code is mostly based on the pseudocode from Wikipedia, though
+we ended up attempting to be able to create actual colorful images and 
+not just simple ASCII-renderings. As it turns out this is where all the 
+troubles started, and we didn't manage to solve them in time. The images
+created looks like the noise your old TV gets, only brown. We rewrote the 
+main body of the program at least three times, and every time the result
+looked like crap.
+
+The implementation works by allocating a vector of triples that contain
+the color codes of each pixel. We then calculate the size steps, loop 
+through all the pixels, figure out whether they should be in the image or 
+not and then assign it a color.
+
+To compile, you can either use CMake or invoke |g++| directly. 
+
+\begin{enumerate}
+  \item |cmake . && make|
+  \item |g++ -O2 -std=c++11 -fopenmp mandelbrot.cpp mandelbrot.h mandelbrot_seq.cpp -o SeqMandel|
+\end{enumerate}
+
+And then run the created binary with the following options: 
+
+\begin{itemize}
+  \item |-i| -- number of iterations 
+  \item |-s| -- size of image 
+  \item |-x| -- the minimum x value
+  \item |-X| -- the maximum x value
+  \item |-y| -- the minimum y value
+  \item |-Y| -- the maximum Y value
+\end{itemize}
+
+\section{Mergesort}
+
+\clearpage
+
+\chapter{Results} % (fold)
+\label{cha:Results}
+
+\section{Mandelbrot} % (fold)
+\label{sec:Mandelbrot}
+
+The input for the programes were images of size $10000$ and the minimum and 
+maximum values for both $x$ and $y$ were $-2.0$ and $2.0$ respectively.
+
+\begin{table}[ht]
+  \centerfloat
+  \begin{tabulary}{.4\linewidth}{ rrrr }
+    \toprule
+    Num threads & Runtime    & Speedup \\
+    \midrule
+    -           & 61.414685s  & 1 \\
+    \midrule
+    1           & 60.241224s  & 1.02 \\
+    5           & 42.505744s  & 1.44 \\
+    10          & 23.375631s  & 2.62  \\
+    20          & 13.683191s  & 4.49  \\
+    40          & 6.987723s  & 8.79 \\
+    60          & 4.803215s & 12.79 \\
+    80          & 3.813177s & 16.10 \\
+    \bottomrule
+  \end{tabulary}
+  \caption{Results for mandelbrot}\label{table:mandel}
+\end{table}
+
+\begin{figure}[ht]
+  \centerfloat
+  \begin{minipage}[t]{.4\linewidth}
+    \centering
+    \begin{tikzpicture}
+      \begin{axis}[
+        title={Runtime},
+        xlabel={Number of threads},
+        ylabel={Time in seconds},
+        ymin=0, ymax=65,
+        xmin=0, xmax=85,
+        ymajorgrids=true,
+        grid style=dashed,
+        legend style={anchor=south east}
+        ]
+
+        \addplot[color=blue,mark=square*,line width=1pt]
+        coordinates {
+          (1,  61.414685)
+          (5, 61.414685)
+          (10, 61.414685)
+          (20, 61.414685)
+          (40, 61.414685)
+          (60, 61.414685)
+          (80, 61.414685)
+        };
+        \addplot[color=red,mark=square*,line width=1pt]
+        coordinates {
+          (1, 60.241224)
+          (5, 42.505744)
+          (10, 23.375631)
+          (20, 13.683191)
+          (40, 6.987723)
+          (60, 4.803215)
+          (80, 3.813177)
+        };
+        \legend{Seq, Par}
+      \end{axis}
+    \end{tikzpicture}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{.37\linewidth}
+    \centering
+    \begin{tikzpicture}
+      \begin{axis}[
+        title={Speedup},
+        xlabel={Number of threads},
+        ylabel={Speedup},
+        xmin=0, xmax=60,
+        ymin=0, ymax=12,
+        ytick={0,1,...,14},
+        ymajorgrids=true,
+        grid style=dashed,
+        legend style={anchor=south east}
+        ]
+
+        \addplot[color=red,mark=square*,line width=1pt]
+        coordinates {
+          (1, 1.02)
+          (5, 1.44)
+          (10, 2.62)
+          (20, 4.49 )
+          (40, 8.79)
+          (60, 12.79)
+          (80, 16.10)
+        };
+        \addplot[color=blue,mark=square*,line width=1pt]
+        coordinates { (1, 1 ) (5, 1 ) (10, 1 ) (20, 1 ) (40, 1 ) (60, 1 ) (80, 1) };
+        \legend{Seq, Par}
+      \end{axis}
+    \end{tikzpicture}
+  \end{minipage}
+  \caption{Plot for runtime and speedup}
+\end{figure}
+
+\clearpage
+
+\chapter{Conclusion} % (fold)
+\label{cha:Conclusion}
+
+\section{Mandelbrot} % (fold)
+\label{sec:Mandelbrot}
+
+As we can see from the runtime and speedup of the mandelbrot problem it is what 
+I think you can call ``embarrassingly parallelizable''. The speed increase is nearly
+linear. This makes sense for this particular implementation as the whole program is
+essentially two for loops where there is no need to keep track of data per thread. 
+
+Compared to the algorithm for mandatory 2 and 1 where the parallel implementation needed
+guards and calculating prefix sums and so on, this is just a simple loop and add 
+data to an array. We initially thought that this problem would be more complex, but 
+as it turns out it wasn't. 
+
+Because it was so simple we planned on attempting a SIMD variant of the program
+to see if pipelining and such would yield a speedup, but our lack of knowledge 
+on both C/C++ and SIMD made this a pipe dream. We suspect it would speed everything
+up a bit again, as being able to do multiplication across multiple rows or columns
+should logically yield a speedup.
+
+% chapter Conclusion (end)
+\end{document}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

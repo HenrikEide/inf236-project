@@ -1,8 +1,0 @@
-blockOddEven.c  Block odd-even transposition sort
-mandel.c   	Parallel computation of the mandelbrot set
-merge.c         Sequential merge sort
-oddeven.c       Basic parallel odd-even transposition sort
-p1selection.c   Parallel selection sort using a sequential step to compute minimum value
-pmerge.c        Parallel merge sort
-pselection.c    Parallel selection sort using critical section
-selection.c     Sequential selection sort

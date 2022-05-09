@@ -114,7 +114,6 @@ int main(int argc, char *argv[]) {
   if (!sorted)
     printf("The data is not sorted!!!\n");
 
-
 }
 
 int merge(int *A,int iLeft, int iRight, int iEnd,int *B) {

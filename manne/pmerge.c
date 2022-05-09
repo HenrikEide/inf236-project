@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
   }
 
   printf("\nResult for parallel sorting \n");
-  printf("Sorting %d elements took %f seconds\n",dim,dim,t_bs);
+  printf("Sorting %d elements took %f seconds\n",dim,t_bs);
   printf("Using %d processors, Speedup is %f \n\n",num_proc,6.415690/t_bs);
 
   int sorted = true;

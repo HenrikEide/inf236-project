@@ -3,7 +3,7 @@
 #include <omp.h>
 
 
-// Parallel merge
+// Merge
 void merge(int *a, int *b, int l, int r, int end){
     int j, i = l, k = r;
 
@@ -58,6 +58,7 @@ void mergeSort(int *a, int n) {
     }
 }
 
+// Compare fuction for use in qsort
 int cmp(const void *a, const void *b) {
     int *x = (int *) a;
     int *y = (int *) b;

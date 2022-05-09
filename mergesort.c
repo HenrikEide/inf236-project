@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define yes 1
+
 
 
 
@@ -11,10 +11,12 @@ void merge(int *a, int *b, int l, int r, int end){
 
     for (j = l; j < end; j++){
         if (i < r && (k >= end || a[i] <= a[k])){
-            b[j] = a[i++];
+            b[j] = a[i];
+            i++;
         }
         else{
-            b[j] = a[k++];
+            b[j] = a[k];
+            k++;
         }
     }
 }
@@ -39,10 +41,9 @@ void mergeSort(int *a, int n) {
     b = (int *) malloc(sizeof(int *)*n);
 
     int w; // Width
-    for (w = 1; w < n; w = 2 * w){
-        int i;
-        for (i = 0; i < n; i += 2 * w){
-            int r = i + 2;
+    for (w = 1; w < n+1; w = 2 * w){
+        for (int i = 0; i < n; i += 2 * w){
+            int r = i + w;
             int end = i + 2 * w;
             if (r > n)
                 r = n;
@@ -75,11 +76,11 @@ int main(){
         printf("%d ", a[i]);
     }
     
-    mergeSort(a, 0, n);
+    mergeSort(a, n);
 
     printf("\nAfter sort: \n");
     for(int i = 0; i < n; i++){
         printf("%d ", a[i]);
     }
-    return 0;
+    printf("\n");
 }

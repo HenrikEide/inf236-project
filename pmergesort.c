@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <omp.h>
 
 
-// Merge
+// Parallel merge
 void merge(int *a, int *b, int l, int r, int end){
     int j, i = l, k = r;
 
@@ -19,13 +20,18 @@ void merge(int *a, int *b, int l, int r, int end){
 }
 
 
-// Merge sort
+// Parallel merge sort
 void mergeSort(int *a, int n) {
+#pragma omp parallel
+#pragma omp master
+    { int nthreads = omp_get_num_threads(); }
     int *b, *temp;
     b = (int *) malloc(sizeof(int *)*n);
 
     int w; // Width
     for (w = 1; w < n+1; w = 2 * w){
+#pragma omp barrier
+#pragma omp for
         for (int i = 0; i < n; i += 2 * w){
             int r = i + w;
             int end = i + 2 * w;
@@ -35,12 +41,15 @@ void mergeSort(int *a, int n) {
                 end = n;
             merge(a, b, i, r, end);
         }
+#pragma omp barrier
+#pragma omp master 
+    {
         temp = a;
         a = b;
         b = temp;
     }
+    }
 }
-
 
 // Main function, for testing
 int main(){

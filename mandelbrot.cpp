@@ -50,10 +50,10 @@ int COLORS[17][3] = {
 
 void setColor(size_t x, size_t y, size_t iteration, Mandelbrot mandel, vector<tuple<int, int, int>>& image) {
   if (iteration == mandel.maxIter) {
-    image[(mandel.height * y) + x] = make_tuple(COLORS[COLOR_SIZE][0], COLORS[COLOR_SIZE][1], COLORS[COLOR_SIZE][2]);
+    image[(mandel.size * y) + x] = make_tuple(COLORS[COLOR_SIZE][0], COLORS[COLOR_SIZE][1], COLORS[COLOR_SIZE][2]);
   } else {
     auto color = iteration % COLOR_SIZE;
-    image[(mandel.height * y) + x] = make_tuple(COLORS[color][0], COLORS[color][1], COLORS[color][2]);
+    image[(mandel.size * y) + x] = make_tuple(COLORS[color][0], COLORS[color][1], COLORS[color][2]);
   }
 }
 
@@ -61,7 +61,7 @@ void writeImage(Mandelbrot mandel, const vector<tuple<int, int, int>>& image) {
   ofstream file;
   file.open("mandelbrot.ppm");
   file << "P6"
-       << " " << mandel.height << " " << mandel.width << " "
+       << " " << mandel.size << " " << mandel.size << " "
        << "255" << endl;
 
   for (const auto& item : image) {

@@ -57,14 +57,18 @@ int main(int argc, char *argv[]) {
   auto xScale = (mandelbrot.xMax - mandelbrot.xMin) / static_cast<float>(mandelbrot.size);
   auto yScale = (mandelbrot.yMax - mandelbrot.yMin) / static_cast<float>(mandelbrot.size);
 
-  for (size_t y = 0; y < mandelbrot.size; ++y) {
-    auto yy = mandelbrot.yMin + static_cast<float>(y) * yScale;
+#pragma omp parallel default(none) shared(yScale, xScale, image, mandelbrot)
+  {
+#pragma omp for
+    for (size_t y = 0; y < mandelbrot.size; ++y) {
+      auto yy = mandelbrot.yMin + static_cast<float>(y) * yScale;
 
-    for (size_t x = 0; x < mandelbrot.size; ++x) {
-      auto xx = mandelbrot.xMin + static_cast<float>(x) * xScale;
+      for (size_t x = 0; x < mandelbrot.size; ++x) {
+        auto xx = mandelbrot.xMin + static_cast<float>(x) * xScale;
 
-      auto iteration = computePixel(xx, yy, mandelbrot);
-      setColor(x, y, iteration, mandelbrot, image);
+        auto iteration = computePixel(xx, yy, mandelbrot);
+        setColor(x, y, iteration, mandelbrot, image);
+      }
     }
   }
 

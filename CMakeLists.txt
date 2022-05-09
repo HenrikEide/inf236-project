@@ -12,5 +12,7 @@ find_package(OpenMP REQUIRED)
 add_library(mandelbrot mandelbrot.h mandelbrot.cpp)
 
 add_executable(SeqMandel mandelbrot_seq.cpp)
+add_executable(ParMandel mandelbrot_par.cpp)
 
 target_link_libraries(SeqMandel PRIVATE OpenMP::OpenMP_CXX mandelbrot)
+target_link_libraries(ParMandel PRIVATE OpenMP::OpenMP_CXX mandelbrot)

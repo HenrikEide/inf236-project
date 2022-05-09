@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <omp.h>
 
 // Merge
+// a, b: arrays to merge
+// l, r: left and right boundaries of the subarray
+// end: end of the array
 void merge(int *a, int *b, int l, int r, int end){
     int j, i = l, k = r;
 
@@ -18,12 +21,14 @@ void merge(int *a, int *b, int l, int r, int end){
     }
 }
 
-
 // Merge sort
+// a: array to sort
+// n: length of array
 void mergeSort(int *a, int n) {
     int *b, *temp;
+    float timeS, timeE;
     b = (int *) malloc(sizeof(int *)*n);
-
+    timeS = omp_get_wtime();
     int w; // Width
     for (w = 1; w < n+1; w = 2 * w){
         for (int i = 0; i < n; i += 2 * w){
@@ -39,24 +44,52 @@ void mergeSort(int *a, int n) {
         a = b;
         b = temp;
     }
+    timeE = omp_get_wtime();
+    printf("\nTime: %f\n", timeE - timeS);
 }
 
+int cmp(const void *a, const void *b) {
+    int *x = (int *) a;
+    int *y = (int *) b;
+    return *x - *y;
+}
 
-// Main function, for testing
+// Main function
 int main(){
-    int a[] = {4, 2, 5, 1, 3, 8, 7, 6};
-    int n = sizeof(a)/sizeof(a[0]);
+    int n;
+    printf("Enter the number of elements: \n");
+    scanf("%d", &n);
 
-    printf("Before sort: \n");
-    for(int i = 0; i < n; i++){
-        printf("%d ", a[i]);
+
+    int *a = (int*)calloc(n, sizeof(int));
+    int *test = (int*)calloc(n, sizeof(int));
+    for (int i = 0; i < n; i++){
+        a[i] = rand() % n;
+        test[i] = a[i];
     }
-    
+
+    //Print the array, for testing
+    // printf("Before sort: \n");
+    // for(int i = 0; i < n; i++){
+    //     printf("%d ", a[i]);
+    // }
+
     mergeSort(a, n);
 
-    printf("\nAfter sort: \n");
-    for(int i = 0; i < n; i++){
-        printf("%d ", a[i]);
+    // For testing
+    qsort(test, n, sizeof(int), cmp);
+    for (int i = 0; i < n; i++){
+        if (a[i] != test[i]){
+            printf("\nError: Sorting failed at %d \n", i);
+            break;
+        }
     }
-    printf("\n");
+    
+
+    // printf("\nAfter sort: \n");
+    // for(int i = 0; i < n; i++){
+    //     printf("%d ", a[i]);
+    //     printf("%d \n", test[i]);
+    // }
+    // printf("\n");
 }

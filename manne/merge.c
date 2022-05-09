@@ -104,7 +104,7 @@ int main(int argc, char *argv[]) {
     printf("\n");
   }
 
-  printf("\nSequential sorting of %d elements took %f seconds\n\n",dim,dim,t_bs);
+  printf("\nSequential sorting of %d elements took %f seconds\n\n",dim,t_bs);
 
   int sorted = true;
   for(i=0;i<dim-1;i++) {

@@ -22,12 +22,15 @@ void merge(int *a, int *b, int l, int r, int end){
 
 // Parallel merge sort
 void mergeSort(int *a, int n) {
+    float timeS, timeE;
+
 #pragma omp parallel
-#pragma omp master
-    { int nthreads = omp_get_num_threads(); }
+#pragma omp master 
+    { int nthreads = omp_get_num_threads();}
     int *b, *temp;
     b = (int *) malloc(sizeof(int *)*n);
-
+#pragma omp master
+    { timeS = omp_get_wtime();}
     int w; // Width
     for (w = 1; w < n+1; w = 2 * w){
 #pragma omp barrier
@@ -49,23 +52,53 @@ void mergeSort(int *a, int n) {
         b = temp;
     }
     }
+#pragma omp master
+    { timeE = omp_get_wtime();
+    printf("\nTime: %f\n", timeE - timeS);
+    }
 }
 
-// Main function, for testing
-int main(){
-    int a[] = {4, 2, 5, 1, 3, 8, 7, 6};
-    int n = sizeof(a)/sizeof(a[0]);
+int cmp(const void *a, const void *b) {
+    int *x = (int *) a;
+    int *y = (int *) b;
+    return *x - *y;
+}
 
-    printf("Before sort: \n");
-    for(int i = 0; i < n; i++){
-        printf("%d ", a[i]);
+// Main function
+int main(){
+    int n;
+
+    printf("Enter the number of elements: \n");
+    scanf("%d", &n);
+
+    int *a = (int*)calloc(n, sizeof(int));
+    int *test = (int*)calloc(n, sizeof(int));
+    for (int i = 0; i < n; i++){
+        a[i] = rand() % n;
+        test[i] = a[i];
     }
-    
+
+    //Print the array, for testing
+    // printf("Before sort: \n");
+    // for(int i = 0; i < n; i++){
+    //     printf("%d ", a[i]);
+    // }
+
     mergeSort(a, n);
 
-    printf("\nAfter sort: \n");
-    for(int i = 0; i < n; i++){
-        printf("%d ", a[i]);
+    // For testing
+    qsort(test, n, sizeof(int), cmp);
+    for (int i = 0; i < n; i++){
+        if (a[i] != test[i]){
+            printf("\nError: Sorting failed at %d \n", i);
+            break;
+        }
     }
+    
+    // printf("\nAfter sort: \n");
+    // for(int i = 0; i < n; i++){
+    //     printf("%d ", a[i]);
+    //     printf("%d \n", test[i]);
+    // }
     printf("\n");
 }

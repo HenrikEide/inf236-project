@@ -1,29 +1,24 @@
 #include "mandelbrot.h"
 
-#include <complex>
+#include <fstream>
+#include <iostream>
+#include <tuple>
 #include <vector>
 
 using namespace std;
 
 // https://en.wikipedia.org/wiki/Plotting_algorithms_for_the_Mandelbrot_set
-size_t computePixel(position pos) {
-  auto x0 = 0.0;
-  auto y0 = 0.0;
-
-  auto x2 = 0.0;
-  auto y2 = 0.0;
-
-  auto x = 0.0;
-  auto y = 0.0;
+size_t computePixel(float _x, float _y, Mandelbrot mandelbrot) {
+  float x = 0.0;
+  float y = 0.0;
 
   size_t iteration = 0;
-  size_t maxIteration = 1000;
+  size_t maxIteration = mandelbrot.maxIter;
 
-  while ((x2 + y2 <= 4) && iteration < maxIteration) {
-    y = 2 * x * y + y0;
-    x = x2 - y2 + x0;
-    x2 = x * x;
-    y2 = y * y;
+  while ((x * x + y * y <= 2 * 2) && iteration < maxIteration) {
+    auto temp = x * x - y * y + _x;
+    y = 2 * x * y + _y;
+    x = temp;
     iteration++;
   }
 
@@ -32,6 +27,7 @@ size_t computePixel(position pos) {
 
 // https://stackoverflow.com/a/16505538/273503
 // CC BY-SA 3.0
+int const COLOR_SIZE = 16;
 int COLORS[17][3] = {
     // R   G   B
     {66, 30, 15},     // brown 3
@@ -51,3 +47,28 @@ int COLORS[17][3] = {
     {153, 87, 0},     // brown 1
     {106, 52, 3},     // brown 2
 };
+
+void setColor(size_t x, size_t y, size_t iteration, Mandelbrot mandel, vector<tuple<int, int, int>>& image) {
+  if (iteration == mandel.maxIter) {
+    image[(mandel.height * y) + x] = make_tuple(COLORS[COLOR_SIZE][0], COLORS[COLOR_SIZE][1], COLORS[COLOR_SIZE][2]);
+  } else {
+    auto color = iteration % COLOR_SIZE;
+    image[(mandel.height * y) + x] = make_tuple(COLORS[color][0], COLORS[color][1], COLORS[color][2]);
+  }
+}
+
+void writeImage(Mandelbrot mandel, const vector<tuple<int, int, int>>& image) {
+  ofstream file;
+  file.open("mandelbrot.ppm");
+  file << "P6"
+       << " " << mandel.height << " " << mandel.width << " "
+       << "255" << endl;
+
+  for (const auto& item : image) {
+    int r, g, b;
+    tie(r, g, b) = item;
+    file << r << g << b << "  ";
+  }
+
+  file.close();
+}
